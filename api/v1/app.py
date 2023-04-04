@@ -4,10 +4,17 @@ from flask import Flask, jsonify
 from models import storage
 from api.v1.views import app_views
 from os import getenv
+from flask_cors import CORS, cross_origin
+
 
 app = Flask(__name__)
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 app.register_blueprint(app_views, url_prefix='/api/v1')
 
+
+@cross_origin(origin="*")
+def temp():
+    pass
 
 @app.teardown_appcontext
 def teardown_db(exception):
