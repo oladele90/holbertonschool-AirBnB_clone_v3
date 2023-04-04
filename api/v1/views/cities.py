@@ -39,7 +39,7 @@ def get_or_delete(city_id=None):
                 if key not in ignore:
                     setattr(city, key, value)
             storage.save()
-            return make_response(jsonify(city.to_dict(), 200))
+            return make_response(jsonify(city.to_dict()), 200)
 
 
 @app_views.route("/states/<state_id>/cities", methods=["POST"],
