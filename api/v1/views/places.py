@@ -43,18 +43,20 @@ def delete_place(place_id):
 def post_place(city_id):
     """creates a Place"""
     city = storage.get(City, city_id)
-    user = storage.get(User, user_id)
     if city is None:
-        abort(404)
-    if user is None:
         abort(404)
     if not request.get_json():
         abort(400, "Not a JSON")
-    if "user_id" not in request.get_json():
+    data = request.get_json()
+    if "user_id" not in data:
         abort(400, "Missing user_id")
-    if "name" not in request.get_json():
+    user_id = data["user_id"]
+    user = storage.get(User, user_id)
+    if user is None:
+        abort(404)
+    if "name" not in data:
         abort(400, "Missing name")
-    place = Place(**request.get_json())
+    place = Place(**data)
     place.city_id = city_id
     place.save()
     return make_response(jsonify(place.to_dict()), 201)
