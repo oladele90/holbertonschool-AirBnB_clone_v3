@@ -26,13 +26,25 @@ class FileStorage:
 
     def count(self, cls=None):
         """returns count of all objects in a class"""
-        return len(self.all(cls))
+        if cls is not None:
+            return sum(1 for value in self.__objects.values()
+                       if cls == value.__class__ or
+                       cls == value.__class__.__name__)
+        return len(self.__objects)
 
     def get(self, cls, id):
         """returns a single object"""
         if cls and id:
-            return self.all(cls).get("{}.{}".format(cls.__name__, id))
-        return None
+            key = "{}.{}".format(cls.__name__, id)
+            return (
+                self.__objects.get(key)
+                if key in self.__objects
+                and (
+                    cls == self.__objects[key].__class__
+                    or cls == self.__objects[key].__class__.__name__
+                )
+                else None
+            )
 
     def all(self, cls=None):
         """returns the dictionary __objects"""
