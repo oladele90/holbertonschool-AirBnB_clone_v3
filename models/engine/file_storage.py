@@ -34,15 +34,17 @@ class FileStorage:
 
     def get(self, cls, id):
         """returns a single object"""
-        if cls and id:
-            key = "{}.{}".format(cls.__name__, id)
-            return (
-                self.__objects.get(key)
-                if key in self.__objects
-                and (cls == self.__objects[key].__class__
-                    or cls == self.__objects[key].__class__.__name__)
-                else None
-            )
+        if not cls or not id:
+            return None
+
+        key = "{}.{}".format(cls.__name__, id)
+
+        if key in self.__objects:
+            obj = self.__objects[key]
+            if cls == obj.__class__ or cls == obj.__class__.__name__:
+                return obj
+
+        return None
 
     def all(self, cls=None):
         """returns the dictionary __objects"""
