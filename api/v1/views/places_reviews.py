@@ -15,11 +15,10 @@ def reviews_get(place_id):
     place = storage.get(Place, place_id)
     if place is None:
         abort(404)
-    reviews = [review.to_dict() for review in place.reviews]
-    return jsonify(reviews)
+    return jsonify([reviews.to_dict() for reviews in place.reviews])
 
 
-@app_views.route('/reviews/<review_id>', methods=["DELETE", ["PUT", "GET"]],
+@app_views.route('/reviews/<review_id>', methods=["DELETE", "PUT", "GET"],
                  strict_slashes=False)
 def delete_or_get_rev(review_id):
     """deletes,gets, or puts a Review object"""
@@ -27,15 +26,16 @@ def delete_or_get_rev(review_id):
     if review is None:
         abort(404)
     if request.method == "GET":
-        return jsonify(review.todict())
+        return jsonify(review.to_dict())
     if request.method == "DELETE":
         storage.delete(review)
+        storage.save()
         return make_response(jsonify({}), 200)
     if request.method == "PUT":
         if not request.get_json():
             return make_response(jsonify({'error': 'Not a JSON'}), 400)
         else:
-            reviews = request.json()
+            reviews = request.get_json()
             ignores = ['id', 'created_at', 'updated_at', 'place_id']
             for key, value in reviews.items():
                 if key not in ignores:
@@ -45,10 +45,10 @@ def delete_or_get_rev(review_id):
 
     @app_views.route('/places/<place_id>/reviews', methods=['POST'],
                      strict_slashes=False)
-    def review_post(place_id):
+    def post_review(place_id):
         """makes new review"""
         review = request.get_json()
-        place = storage.get_json()
+        place = storage.get(Place, place_id)
         if place is None:
             abort(404)
         if not review:
