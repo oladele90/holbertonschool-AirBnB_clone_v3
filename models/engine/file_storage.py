@@ -39,10 +39,8 @@ class FileStorage:
             return (
                 self.__objects.get(key)
                 if key in self.__objects
-                and (
-                    cls == self.__objects[key].__class__
-                    or cls == self.__objects[key].__class__.__name__
-                )
+                and (cls == self.__objects[key].__class__
+                    or cls == self.__objects[key].__class__.__name__)
                 else None
             )
 
