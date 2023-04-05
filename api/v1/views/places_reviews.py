@@ -43,6 +43,7 @@ def delete_or_get_rev(review_id):
             storage.save()
             return make_response(jsonify(review.to_dict()), 200)
 
+
 @app_views.route('/places/<place_id>/reviews', methods=['POST'],
                  strict_slashes=False)
 def post_rev(place_id):
@@ -50,7 +51,7 @@ def post_rev(place_id):
     review = request.get_json()
     place = storage.get(Place, place_id)
     if place is None:
-         abort(404)
+        abort(404)
     if not review:
         return make_response(jsonify({'error': 'Not a JSON'}), 400)
     if "user_id" not in review.keys():
